@@ -1,7 +1,7 @@
 import scapy.all as scapy
 import time
 
-ip="10.0.2.0/24"
+ip="192.168.62.0/24"
 clientInfo=[]
 def get_mac(ip):
     arp_request = scapy.ARP(pdst = ip)
@@ -27,7 +27,7 @@ def spoof(target_ip, spoof_ip):
 #answered_list = scapy.srp(arp_request_broadcast, timeout = 5, verbose = False)[0]
 
 
-get_mac("10.0.2.0/24")
+get_mac(ip)
 for iter in clientInfo:
     print(iter['ip']+' || '+iter['mac'])
 #print(hwdst)
