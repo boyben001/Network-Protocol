@@ -18,8 +18,8 @@ def get_mac(ip):
     #arp_request_broadcast.getlayer(scapy.packet.Raw).load="stfu3"
     arp_request_broadcast.getlayer(1).hwsrc='5'
     #rawPayload = (arp_request_broadcast.getlayer(layers.l2.Ether).dst)
-    rawPayload = (arp_request_broadcast.getlayer(layers.inet.TCP).sport)
-    print(rawPayload)
+    #rawPayload = (arp_request_broadcast.getlayer(layers.inet.TCP).sport)
+    #print(rawPayload)
     print("1")
 
 
@@ -27,7 +27,7 @@ def get_mac(ip):
     
     
     answered_list = scapy.srp(arp_request_broadcast, timeout = 5, verbose = False)[0]
-    #arp_request_broadcast.show()
+    arp_request_broadcast.show()
     for i,recieved in answered_list:
         clientInfo.append({'ip':recieved.psrc,'mac':recieved.hwsrc})
         

