@@ -33,6 +33,6 @@ def print_result(list):   #Parse the response
                
       
         
-gateway_ip = "192.168.146.236/24"   
+gateway_ip = "192.168.1.1/24"   
 scan_result = scan(gateway_ip)    #可拿到所有子網路的封包回應
 print_result(scan_result)

