@@ -7,7 +7,7 @@ logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 
 gateway_ip = "192.168.0.1" 
-target_ip = "192.168.0.105"
+target_ip = "192.168.0.104"
 
 #   Scan.py
 def get_argments():

